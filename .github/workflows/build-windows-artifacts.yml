@@ -43,10 +43,10 @@ jobs:
               run: |
                   mkdir %BUILD_DIR%
                   cd %BUILD_DIR%
-                  cmake .. `
-                    -DCMAKE_BUILD_TYPE=Release `
-                    -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake `
-                    -DENABLE_OPENMP=ON
+                  cmake .. -G "MinGW Makefiles" ^
+                      -DCMAKE_BUILD_TYPE=Release ^
+                      -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake ^
+                      -DENABLE_OPENMP=ON
 
             # build project
             - name: Build Project
