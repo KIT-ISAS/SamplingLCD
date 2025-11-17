@@ -11,8 +11,8 @@ jobs:
         env:
             BUILD_DIR: build
             ARTIFACT_DIR: artifacts
-            CC: C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/gcc.exe
-            CXX: C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/g++.exe
+            CC: C:/ProgramData/mingw64/mingw64/bin/gcc.exe
+            CXX: C:/ProgramData/mingw64/mingw64/bin/g++.exe
 
         steps:
             # checkout code
@@ -24,7 +24,7 @@ jobs:
               id: cache-mingw
               uses: actions/cache@v4
               with:
-                  path: C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin
+                  path: C:\ProgramData\mingw64\mingw64\bin
                   key: mingw-${{ runner.os }}-cache
                   restore-keys: |
                       mingw-${{ runner.os }}-
@@ -36,7 +36,7 @@ jobs:
 
             # add MinGW to PATH
             - name: Add MinGW to PATH
-              run: echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
+              run: echo "C:\ProgramData\mingw64\mingw64\bin" >> $GITHUB_PATH
 
             # cache vcpkg packages
             - name: Cache vcpkg
