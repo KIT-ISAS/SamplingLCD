@@ -51,26 +51,34 @@ jobs:
 
             # configure CMake for your project
             - name: Configure CMake
-              shell: cmd
+              shell: pwsh
               run: |
-                  if exist %BUILD_DIR% rmdir /S /Q %BUILD_DIR%
-                  mkdir %BUILD_DIR%
-                  cd %BUILD_DIR%
-                  for /f "delims=" %%i in ('%CC% -print-file-name=libgomp.a') do set GOMP_LIB=%%i
-                  cmake .. -G "MinGW Makefiles" ^
-                  -DCMAKE_BUILD_TYPE=Release ^
-                  -DCMAKE_PREFIX_PATH="../vcpkg/installed/x64-mingw-static;../vcpkg/installed/x64-mingw-dynamic" ^
-                  -DOpenMP_C_FLAGS="-fopenmp" ^
-                  -DOpenMP_C_LIB_NAMES="gomp" ^
-                  -DOpenMP_CXX_FLAGS="-fopenmp" ^
-                  -DOpenMP_CXX_LIB_NAMES="gomp" ^
-                  -DOpenMP_gomp_LIBRARY=%GOMP_LIB%
+                  # create the build directory
+                  if (-not (Test-Path $env:BUILD_DIR)) {
+                  New-Item -ItemType Directory -Path $env:BUILD_DIR
+                  }
+
+                  # change to build directory
+                  Set-Location $env:BUILD_DIR
+
+                  # get libgomp path
+                  $GOMP_LIB = & "$env:CC" -print-file-name=libgomp.a
+
+                  # CMake Configuration
+                  cmake .. -G "MinGW Makefiles" `
+                  -DCMAKE_BUILD_TYPE=Release `
+                  -DCMAKE_PREFIX_PATH="../vcpkg/installed/x64-mingw-static;../vcpkg/installed/x64-mingw-dynamic" `
+                  -DOpenMP_C_FLAGS="-fopenmp" `
+                  -DOpenMP_C_LIB_NAMES="gomp" `
+                  -DOpenMP_CXX_FLAGS="-fopenmp" `
+                  -DOpenMP_CXX_LIB_NAMES="gomp" `
+                  -DOpenMP_gomp_LIBRARY="$GOMP_LIB"
 
             # build project
             - name: Build Project
-              shell: cmd
+              shell: pwsh
               run: |
-                  cd %BUILD_DIR%
+                  Set-Location $env:BUILD_DIR
                   cmake --build . --config Release
 
             - name: List build folder explicitly
