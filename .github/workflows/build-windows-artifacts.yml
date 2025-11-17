@@ -11,6 +11,8 @@ jobs:
         env:
             BUILD_DIR: build
             ARTIFACT_DIR: artifacts
+            CC: C:/tools/mingw64/bin/gcc.exe
+            CXX: C:/tools/mingw64/bin/g++.exe
 
         steps:
             # checkout code
