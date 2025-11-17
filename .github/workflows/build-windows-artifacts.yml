@@ -58,7 +58,7 @@ jobs:
                     git clone https://github.com/microsoft/vcpkg.git
                     .\vcpkg\bootstrap-vcpkg.bat
                   }
-                  .\vcpkg\vcpkg install gsl:x64-mingw-static gsl:x64-mingw-dynamic gtest:x64-mingw-static benchmark:x64-mingw-static --no-dbg
+                  .\vcpkg\vcpkg install gsl:x64-mingw-static gsl:x64-mingw-dynamic gtest:x64-mingw-static benchmark:x64-mingw-static
 
             # configure CMake for your project
             - name: Configure CMake
