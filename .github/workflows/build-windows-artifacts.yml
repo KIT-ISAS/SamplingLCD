@@ -51,14 +51,24 @@ jobs:
 
             # configure CMake for your project
             - name: Configure CMake
+              shell: cmd
               run: |
+                  if exist %BUILD_DIR% rmdir /S /Q %BUILD_DIR%
                   mkdir %BUILD_DIR%
                   cd %BUILD_DIR%
-                  $GOMP_LIB=$(gcc -print-file-name=libgomp.a)
-                  cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="../vcpkg/installed/x64-mingw-static;../vcpkg/installed/x64-mingw-dynamic" -DOpenMP_C_FLAGS="-fopenmp" -DOpenMP_C_LIB_NAMES="gomp" -DOpenMP_CXX_FLAGS="-fopenmp" -DOpenMP_CXX_LIB_NAMES="gomp" -DOpenMP_gomp_LIBRARY="$GOMP_LIB"
+                  for /f "delims=" %%i in ('%CC% -print-file-name=libgomp.a') do set GOMP_LIB=%%i
+                  cmake .. -G "MinGW Makefiles" ^
+                  -DCMAKE_BUILD_TYPE=Release ^
+                  -DCMAKE_PREFIX_PATH="../vcpkg/installed/x64-mingw-static;../vcpkg/installed/x64-mingw-dynamic" ^
+                  -DOpenMP_C_FLAGS="-fopenmp" ^
+                  -DOpenMP_C_LIB_NAMES="gomp" ^
+                  -DOpenMP_CXX_FLAGS="-fopenmp" ^
+                  -DOpenMP_CXX_LIB_NAMES="gomp" ^
+                  -DOpenMP_gomp_LIBRARY=%GOMP_LIB%
 
             # build project
             - name: Build Project
+              shell: cmd
               run: |
                   cd %BUILD_DIR%
                   cmake --build . --config Release
