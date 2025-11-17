@@ -58,14 +58,14 @@ jobs:
                     git clone https://github.com/microsoft/vcpkg.git
                     .\vcpkg\bootstrap-vcpkg.bat
                   }
-                  .\vcpkg\vcpkg install gsl:x64-mingw-static gsl:x64-mingw-dynamic gtest:x64-mingw-static benchmark:x64-mingw-static
+                  .\vcpkg\vcpkg install gsl:x64-mingw-static gsl:x64-mingw-dynamic gtest:x64-mingw-static benchmark:x64-mingw-static --no-dbg
 
             # configure CMake for your project
             - name: Configure CMake
               run: |
                   mkdir %BUILD_DIR%
                   cd %BUILD_DIR%
-                  cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DENABLE_OPENMP=ON
+                  cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_OPENMP=ON
 
             # build project
             - name: Build Project
