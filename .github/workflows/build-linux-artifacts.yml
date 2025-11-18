@@ -31,7 +31,7 @@ jobs:
                   mkdir build && cd build
                   cmake .. -DCMAKE_BUILD_TYPE=Release
                   make -j$(nproc)
-                  sudo cp lib/*.a /usr/lib
+                  sudo make install
 
             - name: build Google Benchmark
               run: |
