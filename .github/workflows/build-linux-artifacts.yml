@@ -74,17 +74,16 @@ jobs:
                   # static libs
                   find "$BUILD_DIR" -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
 
-                  # Google Test libraries
-                  find "$GITHUB_WORKSPACE"/googletest/build -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
-                  find "$GITHUB_WORKSPACE"/googletest/build -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
+                  # Google Test shared libraries
+                  cp -v "$GITHUB_WORKSPACE"/googletest/build/lib/*.so* "$ARTIFACT_DIR"/ 2>/dev/null || echo "No GTest shared libs"
 
-                  # Google Benchmark libraries
-                  find "$GITHUB_WORKSPACE"/benchmark/build -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
-                  find "$GITHUB_WORKSPACE"/benchmark/build -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
+                  # Google Benchmark shared libraries
+                  cp -v "$GITHUB_WORKSPACE"/benchmark/build/src/*.so* "$ARTIFACT_DIR"/ 2>/dev/null || echo "No Benchmark shared libs"
 
-                  # gsl
-                  cp -v /usr/lib/x86_64-linux-gnu/libgsl* "$ARTIFACT_DIR"/
-                  cp -v /usr/lib/x86_64-linux-gnu/libgslcblas* "$ARTIFACT_DIR"/
+                  # system libraries (GSL / OpenMP)
+                  cp -v /usr/lib/x86_64-linux-gnu/libgsl.so* "$ARTIFACT_DIR"/
+                  cp -v /usr/lib/x86_64-linux-gnu/libgslcblas.so* "$ARTIFACT_DIR"/
+                  cp -v /usr/lib/x86_64-linux-gnu/libgomp.so* "$ARTIFACT_DIR"/
 
             - name: upload artifacts
               uses: actions/upload-artifact@v4
