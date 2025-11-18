@@ -69,10 +69,22 @@ jobs:
                   cp -v "$BUILD_DIR"/lib/unit "$ARTIFACT_DIR"/
                   cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR"/
 
-                  # shared libs
+                  # project libraries
                   find "$BUILD_DIR" -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
                   # static libs
                   find "$BUILD_DIR" -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
+
+                  # Google Test libraries
+                  find "$GITHUB_WORKSPACE"/googletest/build -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
+                  find "$GITHUB_WORKSPACE"/googletest/build -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
+
+                  # Google Benchmark libraries
+                  find "$GITHUB_WORKSPACE"/benchmark/build -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
+                  find "$GITHUB_WORKSPACE"/benchmark/build -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
+
+                  # gsl
+                  cp -v /usr/lib/x86_64-linux-gnu/libgsl* "$ARTIFACT_DIR"/
+                  cp -v /usr/lib/x86_64-linux-gnu/libgslcblas* "$ARTIFACT_DIR"/
 
             - name: upload artifacts
               uses: actions/upload-artifact@v4
