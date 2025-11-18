@@ -81,6 +81,13 @@ jobs:
                   Set-Location $env:BUILD_DIR
                   cmake --build . --config Release
 
+            # run tests
+            - name: Run Tests
+              shell: powsh
+              run: |
+                  Set-Location $env:BUILD_DIR/lib
+                  unit.exe
+
             # prepare and upload artifacts
             - name: prepare artifact folder
               shell: pwsh
