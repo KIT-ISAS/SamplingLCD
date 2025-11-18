@@ -85,7 +85,7 @@ jobs:
             - name: Run Tests
               shell: powsh
               run: |
-                  Set-Location $env:BUILD_DIR/lib
+                  Set-Location "$env:BUILD_DIR/lib"
                   unit.exe
 
             # prepare and upload artifacts
