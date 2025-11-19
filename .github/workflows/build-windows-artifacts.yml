@@ -85,8 +85,7 @@ jobs:
             - name: Run Tests
               shell: pwsh
               run: |
-                  Set-Location "$env:BUILD_DIR/lib"
-                  unit.exe
+                  & "$env:BUILD_DIR/lib/unit.exe"
 
             # prepare and upload artifacts
             - name: prepare artifact folder
