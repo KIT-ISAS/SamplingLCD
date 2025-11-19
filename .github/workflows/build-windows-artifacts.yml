@@ -83,7 +83,7 @@ jobs:
 
             # run tests
             - name: Run Tests
-              shell: powsh
+              shell: pwsh
               run: |
                   Set-Location "$env:BUILD_DIR/lib"
                   unit.exe
