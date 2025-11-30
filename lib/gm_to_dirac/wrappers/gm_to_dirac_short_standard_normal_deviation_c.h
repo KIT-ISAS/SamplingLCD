@@ -27,7 +27,8 @@ DLL_EXPORT bool gm_to_dirac_short_standard_normal_deviation_double_approximate(
     const ApproximateOptions* options) {
   auto* obj = static_cast<gm_to_dirac_short_standard_normal_deviation<double>*>(
       instance);
-  return obj->approximate(L, N, bMax, x, wX, result, *options);
+  return obj->approximate(L, N, bMax, x, wX, result,
+                          options ? *options : ApproximateOptions{});
 }
 
 DLL_EXPORT void* create_gm_to_dirac_short_standard_normal_deviation_float() {
@@ -45,7 +46,8 @@ DLL_EXPORT bool gm_to_dirac_short_standard_normal_deviation_float_approximate(
     GslminimizerResult* result, const ApproximateOptions* options) {
   auto* obj = static_cast<gm_to_dirac_short_standard_normal_deviation<float>*>(
       instance);
-  return obj->approximate(L, N, bMax, x, wX, result, *options);
+  return obj->approximate(L, N, bMax, x, wX, result,
+                          options ? *options : ApproximateOptions{});
 }
 
 }  // extern "C"

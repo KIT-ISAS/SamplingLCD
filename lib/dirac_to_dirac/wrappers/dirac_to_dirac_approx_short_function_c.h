@@ -29,7 +29,7 @@ DLL_EXPORT bool dirac_to_dirac_approx_short_function_double_approximate(
   auto* obj =
       static_cast<dirac_to_dirac_approx_short_function<double>*>(instance);
   return obj->approximate(y, M, L, N, bMax, x, wXcallback, wXDcallback, result,
-                          *options);
+                          options ? *options : ApproximateOptions{});
 }
 
 }  // extern "C"

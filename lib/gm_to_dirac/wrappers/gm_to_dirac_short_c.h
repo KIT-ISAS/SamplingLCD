@@ -24,7 +24,8 @@ DLL_EXPORT bool gm_to_dirac_short_double_approximate(
     double* x, const double* wX, GslminimizerResult* result,
     const ApproximateOptions* options) {
   auto* obj = static_cast<gm_to_dirac_short<double>*>(instance);
-  return obj->approximate(covDiag, L, N, bMax, x, wX, result, *options);
+  return obj->approximate(covDiag, L, N, bMax, x, wX, result,
+                          options ? *options : ApproximateOptions{});
 }
 
 DLL_EXPORT void* create_gm_to_dirac_short_float() {
@@ -40,7 +41,8 @@ DLL_EXPORT bool gm_to_dirac_short_float_approximate(
     float* x, const float* wX, GslminimizerResult* result,
     const ApproximateOptions* options) {
   auto* obj = static_cast<gm_to_dirac_short<float>*>(instance);
-  return obj->approximate(covDiag, L, N, bMax, x, wX, result, *options);
+  return obj->approximate(covDiag, L, N, bMax, x, wX, result,
+                          options ? *options : ApproximateOptions{});
 }
 
 }  // extern "C"
