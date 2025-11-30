@@ -49,6 +49,38 @@ class dirac_to_dirac_approx_function_i {
                            const ApproximateOptions& options) = 0;
 
   /**
+   * @brief return the objective distance used in minimization problem
+   *
+   * @param y input data points
+   * @param M number of input data points
+   * @param L number of data points for reduction
+   * @param N dimension of the data
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+    */
+  virtual void objective_distance(const T* y, size_t M, size_t L, size_t N,
+                                  size_t bMax, T* x, wXf wXcallback,
+                                  T* distance) = 0;
+
+  /**
+   * @brief return the gradient of the objective distance used in minimization
+   * problem
+   *
+   * @param y input data points
+   * @param M number of input data points
+   * @param L number of data points for reduction
+   * @param N dimension of the data
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+   * @param wXDcallback callback for the gradient of the weight function
+   */
+  virtual void objective_gradient(const T* y, size_t M, size_t L, size_t N,
+                                  size_t bMax, T* x, wXf wXcallback,
+                                  wXd wXDcallback, T* grad) = 0;
+
+  /**
    * @brief reduce the data points using gsl vectors
    *
    * @param y input data points
@@ -68,6 +100,36 @@ class dirac_to_dirac_approx_function_i {
                            const ApproximateOptions& options) = 0;
 
   /**
+   * @brief return the objective distance used in minimization problem
+   *
+   * @param y input data points
+   * @param L number of data points for reduction
+   * @param N dimension of the data
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+   */
+  virtual void objective_distance(const GSLVectorType* y, size_t L, size_t N,
+                                  size_t bMax, GSLVectorType* x, wXf wXcallback,
+                                  T* distance) = 0;
+
+  /**
+   * @brief return the gradient of the objective distance used in minimization
+   * problem
+   *
+   * @param y input data points
+   * @param L number of data points for reduction
+   * @param N dimension of the data
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+   * @param wXDcallback callback for the gradient of the weight function
+   */
+  virtual void objective_gradient(const GSLVectorType* y, size_t L, size_t N,
+                                  size_t bMax, GSLVectorType* x, wXf wXcallback,
+                                  wXd wXDcallback, GSLVectorType* grad) = 0;
+
+  /**
    * @brief reduce the data points using gsl matricies where possible
    *
    * @param y input data points
@@ -75,7 +137,6 @@ class dirac_to_dirac_approx_function_i {
    * @param bMax bMax
    * @param x first guess for the reduction and return value
    * @param wXcallback callback for the weight function
-   * @param wXDcallback callback for the gradient of the weight function
    * @param result minimizer result
    * @param options options for minimizer
    * @return true, on success, false otherwise
@@ -84,6 +145,34 @@ class dirac_to_dirac_approx_function_i {
                            GSLMatrixType* x, wXf wXcallback, wXd wXDcallback,
                            GslminimizerResult* result,
                            const ApproximateOptions& options) = 0;
+
+  /**
+   * @brief return the objective distance used in minimization problem
+   *
+   * @param y input data points
+   * @param L number of data points for reduction
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+   */
+  virtual void objective_distance(const GSLMatrixType* y, size_t L, size_t bMax,
+                                  GSLMatrixType* x, wXf wXcallback,
+                                  T* distance) = 0;
+
+  /**
+   * @brief return the gradient of the objective distance used in minimization
+   * problem
+   *
+   * @param y input data points
+   * @param L number of data points for reduction
+   * @param bMax bMax
+   * @param x first guess for the reduction and return value
+   * @param wXcallback callback for the weight function
+   * @param wXDcallback callback for the gradient of the weight function
+   */
+  virtual void objective_gradient(const GSLMatrixType* y, size_t L, size_t bMax,
+                                  GSLMatrixType* x, wXf wXcallback,
+                                  wXd wXDcallback, GSLMatrixType* grad) = 0;
 };
 
 #endif  // DIRAC_TO_DIRAC_APPROX_FUNCTION_I_H

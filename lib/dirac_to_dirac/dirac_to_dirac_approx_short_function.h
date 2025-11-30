@@ -29,6 +29,25 @@ class dirac_to_dirac_approx_short_function
                     wXd wXDcallback,
                     GslminimizerResult* result = nullptr,
                     const ApproximateOptions& options = ApproximateOptions{}) override;
+
+  void objective_distance(const T* y,
+                            size_t M,
+                            size_t L,
+                            size_t N,
+                            size_t bMax,
+                            T* x,
+                            wXf wXcallback,
+                            T* distance) override;
+
+  void objective_gradient(const T *y,
+                            size_t M,
+                            size_t L,
+                            size_t N,
+                            size_t bMax,
+                            T* x,
+                            wXf wXcallback,
+                            wXd wXDcallback,
+                            T* grad) override;
   // clang-format on
 
   // clang-format off
@@ -41,6 +60,23 @@ class dirac_to_dirac_approx_short_function
                     wXd wXDcallback,
                     GslminimizerResult* result = nullptr,
                     const ApproximateOptions& options = ApproximateOptions{}) override;
+
+  void objective_distance(const GSLVectorType* y,
+                            size_t L,
+                            size_t N,
+                            size_t bMax,
+                            GSLVectorType* x,
+                            wXf wXcallback,
+                            T* distance) override;
+
+  void objective_gradient(const GSLVectorType* y,
+                            size_t L,
+                            size_t N,
+                            size_t bMax,
+                            GSLVectorType* x,
+                            wXf wXcallback,
+                            wXd wXDcallback,
+                            GSLVectorType* grad) override;
   // clang-format on
 
   // clang-format off
@@ -52,6 +88,21 @@ class dirac_to_dirac_approx_short_function
                     wXd wXDeriv,
                     GslminimizerResult* result = nullptr,
                     const ApproximateOptions& options = ApproximateOptions{}) override;
+
+  void objective_distance(const GSLMatrixType* y,
+                            size_t L,
+                            size_t bMax,
+                            GSLMatrixType* x,
+                            wXf wXcallback,
+                            T* distance) override;
+
+  void objective_gradient(const GSLMatrixType* y,
+                            size_t L,
+                            size_t bMax,
+                            GSLMatrixType* x,
+                            wXf wXcallback,
+                            wXd wXDcallback,
+                            GSLMatrixType* grad) override;
   // clang-format on
 
  private:
@@ -74,6 +125,16 @@ bool dirac_to_dirac_approx_short_function<double>::approximate(
     const gsl_vector* y, size_t L, size_t N, size_t bMax, gsl_vector* x,
     wXf wXcallback, wXd wXDcallback, GslminimizerResult* result,
     const ApproximateOptions& options);
+
+template <>
+void dirac_to_dirac_approx_short_function<double>::objective_distance(
+    const gsl_vector* y, size_t L, size_t N, size_t bMax, gsl_vector* x,
+    wXf wXcallback, double* distance);
+
+template <>
+void dirac_to_dirac_approx_short_function<double>::objective_gradient(
+    const gsl_vector* y, size_t L, size_t N, size_t bMax, gsl_vector* x,
+    wXf wXcallback, wXd wXDcallback, gsl_vector* grad);
 
 extern template class dirac_to_dirac_approx_short_function<double>;
 

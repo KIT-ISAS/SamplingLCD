@@ -32,6 +32,38 @@ bool dirac_to_dirac_approx_short_function<T>::approximate(
 }
 
 template <typename T>
+void dirac_to_dirac_approx_short_function<T>::objective_distance(
+    const T* y, size_t M, size_t L, size_t N, size_t bMax, T* x, wXf wXcallback,
+    T* distance) {
+  assert(x != nullptr);
+  assert(y != nullptr);
+  GSLVectorViewType xFlat =
+      GSLTemplateTypeAlias<T>::vector_view_from_array(x, L * N);
+  GSLVectorViewType yFlat =
+      GSLTemplateTypeAlias<T>::vector_view_from_array(y, M * N);
+
+  return objective_distance(&(yFlat.vector), L, N, bMax, &(xFlat.vector),
+                            wXcallback, distance);
+}
+
+template <typename T>
+void dirac_to_dirac_approx_short_function<T>::objective_gradient(
+    const T* y, size_t M, size_t L, size_t N, size_t bMax, T* x, wXf wXcallback,
+    wXd wXDcallback, T* grad) {
+  assert(x != nullptr);
+  assert(y != nullptr);
+  GSLVectorViewType xFlat =
+      GSLTemplateTypeAlias<T>::vector_view_from_array(x, L * N);
+  GSLVectorViewType yFlat =
+      GSLTemplateTypeAlias<T>::vector_view_from_array(y, M * N);
+  GSLVectorViewType gradFlat =
+      GSLTemplateTypeAlias<T>::vector_view_from_array(grad, L * N);
+
+  return objective_gradient(&(yFlat.vector), L, N, bMax, &(xFlat.vector),
+                            wXcallback, wXDcallback, &(gradFlat.vector));
+}
+
+template <typename T>
 bool dirac_to_dirac_approx_short_function<T>::approximate(
     GSLMatrixType* y, size_t L, size_t bMax, GSLMatrixType* x, wXf wXcallback,
     wXd wXDcallback, GslminimizerResult* result,
@@ -44,8 +76,45 @@ bool dirac_to_dirac_approx_short_function<T>::approximate(
       GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(y);
   GSLVectorViewType xFlat =
       GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(x);
+
   return approximate(&(yFlat.vector), L, N, bMax, &(xFlat.vector), wXcallback,
                      wXDcallback, result, options);
+}
+
+template <typename T>
+void dirac_to_dirac_approx_short_function<T>::objective_distance(
+    const GSLMatrixType* y, size_t L, size_t bMax, GSLMatrixType* x,
+    wXf wXcallback, T* distance) {
+  assert(x->size2 == y->size2);
+  assert(x->size1 == L);
+
+  size_t N = y->size2;
+  GSLVectorViewType yFlat =
+      GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(y);
+  GSLVectorViewType xFlat =
+      GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(x);
+
+  return objective_distance(&(yFlat.vector), L, N, bMax, &(xFlat.vector),
+                            wXcallback, distance);
+}
+
+template <typename T>
+void dirac_to_dirac_approx_short_function<T>::objective_gradient(
+    const GSLMatrixType* y, size_t L, size_t bMax, GSLMatrixType* x,
+    wXf wXcallback, wXd wXDcallback, GSLMatrixType* grad) {
+  assert(x->size2 == y->size2);
+  assert(x->size1 == L);
+
+  size_t N = y->size2;
+  GSLVectorViewType yFlat =
+      GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(y);
+  GSLVectorViewType xFlat =
+      GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(x);
+  GSLVectorViewType gradFlat =
+      GSLTemplateTypeAlias<T>::flatten_matrix_to_vector(grad);
+
+  return objective_gradient(&(yFlat.vector), L, N, bMax, &(xFlat.vector),
+                            wXcallback, wXDcallback, &(gradFlat.vector));
 }
 
 template <typename T>
@@ -100,7 +169,7 @@ inline void dirac_to_dirac_approx_short_function<T>::combined_distance_metric(
   if (grad) gsl_vector_set_zero(grad);
 
   wXcallback(x->data, wX->data, L, N);
-  wXDcallback(x->data, wXderiv->data, L, N);
+  if (grad) wXDcallback(x->data, wXderiv->data, L, N);
 
   gsl_matrix xMatrix = gsl_matrix_view_array(x->data, L, N).matrix;
   squaredEuclideanDistanceUtilLL->calculateDistance(&xMatrix, &xMatrix);
@@ -256,6 +325,38 @@ bool dirac_to_dirac_approx_short_function<double>::approximate(
       modified_van_mises_distance_sq_derivative, combined_distance_metric);
   const int status = gslMinimizer.minimize(x, result, options.verbose);
   return status == GSL_SUCCESS;
+}
+
+template <>
+void dirac_to_dirac_approx_short_function<double>::objective_distance(
+    const gsl_vector* y, size_t L, size_t N, size_t bMax, gsl_vector* x,
+    wXf wXcallback, double* distance) {
+  assert(x->size == L * N);
+  assert(y->size % N == 0);
+  assert(x->size % N == 0);
+
+  size_t M = y->size / N;
+  DiracToDiracVariableWeightOptimizationParams params =
+      DiracToDiracVariableWeightOptimizationParams(wXcallback, nullptr, y, N, M,
+                                                   L, bMax, c_b(bMax));
+
+  *distance = modified_van_mises_distance_sq(x, &params);
+}
+
+template <>
+void dirac_to_dirac_approx_short_function<double>::objective_gradient(
+    const gsl_vector* y, size_t L, size_t N, size_t bMax, gsl_vector* x,
+    wXf wXcallback, wXd wXDcallback, gsl_vector* grad) {
+  assert(x->size == L * N);
+  assert(y->size % N == 0);
+  assert(x->size % N == 0);
+
+  size_t M = y->size / N;
+  DiracToDiracVariableWeightOptimizationParams params =
+      DiracToDiracVariableWeightOptimizationParams(wXcallback, wXDcallback, y,
+                                                   N, M, L, bMax, c_b(bMax));
+
+  modified_van_mises_distance_sq_derivative(x, &params, grad);
 }
 
 template class dirac_to_dirac_approx_short_function<double>;
