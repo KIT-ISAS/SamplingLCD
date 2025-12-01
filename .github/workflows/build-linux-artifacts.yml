@@ -102,18 +102,18 @@ jobs:
       - name: prepare artifact folder
         run: |
           # create artifact folder
-          mkdir -p "$ARTIFACT_DIR/unix"
+          mkdir -p "$ARTIFACT_DIR/linux"
 
           # project executables
-          cp -v "$BUILD_DIR"/src/main "$ARTIFACT_DIR/unix"/
-          cp -v "$BUILD_DIR"/lib/unit "$ARTIFACT_DIR/unix"/
-          cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR/unix"/
+          cp -v "$BUILD_DIR"/src/main "$ARTIFACT_DIR/linux"/
+          cp -v "$BUILD_DIR"/lib/unit "$ARTIFACT_DIR/linux"/
+          cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR/linux"/
 
           # project libraries
-          cp -rvL "$BUILD_DIR"/install/* "$ARTIFACT_DIR/unix"/
+          cp -rvL "$BUILD_DIR"/install/* "$ARTIFACT_DIR/linux"/
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-binaries
-          path: ${{ env.ARTIFACT_DIR }}
+          name: linux
+          path: ${{ env.ARTIFACT_DIR }}/linux

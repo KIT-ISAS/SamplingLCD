@@ -99,18 +99,18 @@ jobs:
         run: |
           # create artifact folder
           New-Item -ItemType Directory -Force -Path $env:ARTIFACT_DIR
-          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR/win32"
+          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR/windows"
 
           # copy installed artifacts
-          Copy-Item -Recurse -Force "$env:BUILD_DIR/install/*" "$env:ARTIFACT_DIR/win32"
+          Copy-Item -Recurse -Force "$env:BUILD_DIR/install/*" "$env:ARTIFACT_DIR/windows"
 
           # copy executables
-          Copy-Item -Force "$env:BUILD_DIR/lib/unit.exe"      "$env:ARTIFACT_DIR/win32"
-          Copy-Item -Force "$env:BUILD_DIR/lib/benchmark.exe" "$env:ARTIFACT_DIR/win32"
-          Copy-Item -Force "$env:BUILD_DIR/src/main.exe"      "$env:ARTIFACT_DIR/win32"
+          Copy-Item -Force "$env:BUILD_DIR/lib/unit.exe"      "$env:ARTIFACT_DIR/windows"
+          Copy-Item -Force "$env:BUILD_DIR/lib/benchmark.exe" "$env:ARTIFACT_DIR/windows"
+          Copy-Item -Force "$env:BUILD_DIR/src/main.exe"      "$env:ARTIFACT_DIR/windows"
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: ${{ env.ARTIFACT_DIR }}
+          path: ${{ env.ARTIFACT_DIR }}/windows

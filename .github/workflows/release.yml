@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: release/linux
+
+      - name: download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows
+          path: release/windows
+
+      # download macOS artifact
+      # - name: Download macOS artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: macos
+      #     path: release/macos
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
