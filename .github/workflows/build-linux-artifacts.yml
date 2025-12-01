@@ -17,22 +17,23 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v3
 
-            # install dependencies
-            - name: install dependencies
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y build-essential cmake git libomp-dev
+      # install dependencies
+      - name: install dependencies
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y build-essential cmake git libomp-dev
 
-            # build gsl
-            - name: build GSL
-              run: |
-                  cd $GITHUB_WORKSPACE
-                  git clone https://git.savannah.gnu.org/git/gsl.git
-                  cd gsl
-                  autoreconf -i
-                  ./configure CFLAGS="-fPIC" CXXFLAGS="-fPIC" --enable-static --disable-shared --prefix=/usr/local
-                  make -j$(nproc)
-                  sudo make install
+      # build gsl
+      - name: build GSL
+        run: |
+            cd $GITHUB_WORKSPACE
+            git clone https://git.savannah.gnu.org/git/gsl.git
+            cd gsl
+            autoreconf -i
+            ./configure CFLAGS="-fPIC" CXXFLAGS="-fPIC" --enable-static --disable-shared --prefix=/usr/local
+            make -j$(nproc)
+            sudo make install
+
       # install dependencies
       - name: install dependencies
         run: |
