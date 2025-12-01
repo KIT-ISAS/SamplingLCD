@@ -1,4 +1,4 @@
-name: Build Windows C++ Project
+name: Build Windows
 
 on:
     push:
@@ -17,7 +17,7 @@ jobs:
         steps:
             # checkout code
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             # install MinGW via Chocolatey
             - name: Install MinGW
@@ -72,14 +72,15 @@ jobs:
                   -DOpenMP_C_LIB_NAMES="gomp" `
                   -DOpenMP_CXX_FLAGS="-fopenmp" `
                   -DOpenMP_CXX_LIB_NAMES="gomp" `
-                  -DOpenMP_gomp_LIBRARY="$GOMP_LIB"
+                  -DOpenMP_gomp_LIBRARY="$GOMP_LIB" `
+                  -DCMAKE_INSTALL_PREFIX=install
 
             # build project
             - name: Build Project
               shell: pwsh
               run: |
                   Set-Location $env:BUILD_DIR
-                  cmake --build . --config Release
+                  cmake --build . --target install
 
             # run tests
             - name: Run Tests
@@ -93,17 +94,18 @@ jobs:
               run: |
                   # create artifact folder
                   New-Item -ItemType Directory -Force -Path $env:ARTIFACT_DIR
+                  New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR/win32"
 
-                  # copy main binaries and DLLs
-                  Get-ChildItem -Path $env:BUILD_DIR -Include *.exe, *.dll, *.dll.a -Recurse | 
-                      ForEach-Object { Copy-Item $_.FullName -Destination $env:ARTIFACT_DIR -Force }
+                  # copy installed artifacts
+                  Copy-Item -Recurse -Force "$env:BUILD_DIR/install/*" "$env:ARTIFACT_DIR/win32"
 
-                  # copy vcpkg dynamic DLL dependencies
-                  Get-ChildItem -Path ".\vcpkg\installed\x64-mingw-dynamic\bin" -Filter *.dll -Recurse | 
-                      ForEach-Object { Copy-Item $_.FullName -Destination $env:ARTIFACT_DIR -Force }
+                  # copy executables
+                  Copy-Item -Force "$env:BUILD_DIR/lib/unit.exe"      "$env:ARTIFACT_DIR/win32"
+                  Copy-Item -Force "$env:BUILD_DIR/lib/benchmark.exe" "$env:ARTIFACT_DIR/win32"
+                  Copy-Item -Force "$env:BUILD_DIR/src/main.exe"      "$env:ARTIFACT_DIR/win32"
 
             - name: upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: windows-binaries
+                  name: windows
                   path: ${{ env.ARTIFACT_DIR }}
