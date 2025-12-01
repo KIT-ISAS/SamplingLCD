@@ -81,7 +81,7 @@ jobs:
           cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR/unix"/
 
           # project libraries
-          cp -rv "$BUILD_DIR"/install/* "$ARTIFACT_DIR/unix"/
+          cp -rvL "$BUILD_DIR"/install/* "$ARTIFACT_DIR/unix"/
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
