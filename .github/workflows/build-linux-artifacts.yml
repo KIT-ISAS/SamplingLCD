@@ -21,7 +21,18 @@ jobs:
             - name: install dependencies
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y build-essential cmake git libgsl-dev libomp-dev
+                  sudo apt-get install -y build-essential cmake git libomp-dev
+
+            # build gsl
+            - name: build GSL
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  git clone https://git.savannah.gnu.org/git/gsl.git
+                  cd gsl
+                  autoreconf -i
+                  ./configure CFLAGS="-fPIC" CXXFLAGS="-fPIC" --enable-static --disable-shared --prefix=/usr/local
+                  make -j$(nproc)
+                  sudo make install
 
             # build Google Test
             - name: build Google Test
@@ -50,8 +61,8 @@ jobs:
             - name: configure and build application
               run: |
                   mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
-                  cmake .. -DCMAKE_CXX_FLAGS="-fopenmp" -DCMAKE_BUILD_TYPE=Release
-                  cmake --build . --config Release
+                  cmake .. -DCMAKE_CXX_FLAGS="-fopenmp" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
+                  cmake --build . --target install -j$(nproc)
 
             # test application
             - name: run tests
@@ -65,25 +76,12 @@ jobs:
                   mkdir -p "$ARTIFACT_DIR"
 
                   # project binaries
-                  cp -v "$BUILD_DIR"/src/main "$ARTIFACT_DIR"/
-                  cp -v "$BUILD_DIR"/lib/unit "$ARTIFACT_DIR"/
-                  cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR"/
+                  cp -v "$BUILD_DIR"/src/main "$ARTIFACT_DIR/unix"/
+                  cp -v "$BUILD_DIR"/lib/unit "$ARTIFACT_DIR/unix"/
+                  cp -v "$BUILD_DIR"/lib/benchmark "$ARTIFACT_DIR/unix"/
 
                   # project libraries
-                  find "$BUILD_DIR" -type f -name "*.so*" -exec cp -v {} "$ARTIFACT_DIR" \;
-                  # static libs
-                  find "$BUILD_DIR" -type f -name "*.a" -exec cp -v {} "$ARTIFACT_DIR" \;
-
-                  # Google Test shared libraries
-                  cp -v "$GITHUB_WORKSPACE"/googletest/build/lib/*.so* "$ARTIFACT_DIR"/ 2>/dev/null || echo "No GTest shared libs"
-
-                  # Google Benchmark shared libraries
-                  cp -v "$GITHUB_WORKSPACE"/benchmark/build/src/*.so* "$ARTIFACT_DIR"/ 2>/dev/null || echo "No Benchmark shared libs"
-
-                  # system libraries (GSL / OpenMP)
-                  cp -v /usr/lib/x86_64-linux-gnu/libgsl.so* "$ARTIFACT_DIR"/
-                  cp -v /usr/lib/x86_64-linux-gnu/libgslcblas.so* "$ARTIFACT_DIR"/
-                  cp -v /usr/lib/x86_64-linux-gnu/libgomp.so* "$ARTIFACT_DIR"/
+                  cp -rv "$BUILD_DIR"/install/* "$ARTIFACT_DIR/unix"/
 
             - name: upload artifacts
               uses: actions/upload-artifact@v4

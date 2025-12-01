@@ -146,3 +146,19 @@ target_link_libraries(benchmark_target PRIVATE
         benchmark::benchmark 
         benchmark::benchmark_main
         approxLCD_static)
+
+install(TARGETS approxLCD_shared approxLCD_static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+
+if(UNIX AND NOT APPLE)
+    set(UNIX_DLLS
+        "/lib/x86_64-linux-gnu/libgomp.so.1"
+    )
+    install(FILES ${UNIX_DLLS} DESTINATION lib)
+elseif(APPLE)
+
+elseif(WIN32)
+
+endif()
