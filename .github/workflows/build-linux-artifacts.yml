@@ -3,7 +3,10 @@ name: Build Ubuntu C++ Project
 on:
   push:
     branches:
-      - "**"
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-linux:
@@ -21,8 +24,8 @@ jobs:
       # install dependencies
       - name: install dependencies
         run: |
-            sudo apt-get update
-            sudo apt-get install -y build-essential cmake git libomp-dev
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake git libomp-dev
 
       # cache third-party deps (GSL, GTest, Benchmark)
       - name: cache third-party deps
@@ -86,9 +89,9 @@ jobs:
       # make build directory and compile
       - name: configure and build application
         run: |
-            mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
-            cmake .. -DCMAKE_CXX_FLAGS="-fopenmp" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${DEPS_DIR}"
-            cmake --build . --target install -j$(nproc)
+          mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
+          cmake .. -DCMAKE_CXX_FLAGS="-fopenmp" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${DEPS_DIR}"
+          cmake --build . --target install -j$(nproc)
 
       # test application
       - name: run tests
