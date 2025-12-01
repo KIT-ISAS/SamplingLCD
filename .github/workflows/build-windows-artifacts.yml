@@ -121,6 +121,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.ARTIFACT_DIR }}/windows/*
+          files: ${{ env.ARTIFACT_DIR }}/windows
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
