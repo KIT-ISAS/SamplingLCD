@@ -165,12 +165,23 @@ install(TARGETS approxLCD_shared
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
 
-# List of runtime DLLs
-set(MINGW_DLLS
-    "C:/ProgramData/mingw64/mingw64/bin/libwinpthread-1.dll"
-    "C:/ProgramData/mingw64/mingw64/bin/libgomp-1.dll"
-    "C:/ProgramData/mingw64/mingw64/bin/libgcc_s_seh-1.dll"
-)
+install(TARGETS approxLCD_shared approxLCD_static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
-# Install the MinGW DLLs into the same bin folder
-install(FILES ${MINGW_DLLS} DESTINATION bin)
+if(UNIX AND NOT APPLE)
+    set(UNIX_DLLS
+        "/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0"
+    )
+    install(FILES ${UNIX_DLLS} DESTINATION lib)
+elseif(APPLE)
+
+elseif(WIN32)
+    set(MINGW_DLLS
+        "C:/ProgramData/mingw64/mingw64/bin/libwinpthread-1.dll"
+        "C:/ProgramData/mingw64/mingw64/bin/libgomp-1.dll"
+        "C:/ProgramData/mingw64/mingw64/bin/libgcc_s_seh-1.dll"
+    )
+    install(FILES ${MINGW_DLLS} DESTINATION bin)
+endif()
