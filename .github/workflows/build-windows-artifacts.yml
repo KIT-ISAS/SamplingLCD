@@ -116,11 +116,4 @@ jobs:
         with:
           name: windows
           path: ${{ env.ARTIFACT_DIR }}/windows
-
-      - name: Upload artifacts to draft release on tag
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ${{ env.ARTIFACT_DIR }}/windows
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
