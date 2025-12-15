@@ -3,7 +3,6 @@ FROM quay.io/pypa/manylinux2014_x86_64
 
 # install required build tools
 RUN yum install -y \
-    gcc-toolset-10 \
     make \
     cmake3 \
     git \
@@ -12,9 +11,6 @@ RUN yum install -y \
     automake \
     libtool \
     && yum clean all
-
-# c++17 support
-SHELL ["/opt/rh/devtoolset-10/root/usr/bin/bash", "-c"]
 
 WORKDIR /work
 
